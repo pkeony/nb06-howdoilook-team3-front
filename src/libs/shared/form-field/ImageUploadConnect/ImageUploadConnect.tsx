@@ -1,57 +1,74 @@
-'use client'
+'use client';
 
-import Hint from '@libs/shared/input/Hint/Hint'
-import { Controller, ControllerProps, FieldPath, FieldValues, useController, useFormContext } from 'react-hook-form'
-import classNames from 'classnames/bind'
-import styles from './ImageUploadConnect.module.scss'
-import Button from '@libs/shared/button/Button'
-import { useRef, useState } from 'react'
-import uploadImage from './uploadImage'
-import Icon from '@libs/shared/icon/Icon'
-import Image from 'next/image'
+import Hint from '@libs/shared/input/Hint/Hint';
+import {
+  Controller,
+  ControllerProps,
+  FieldPath,
+  FieldValues,
+  useController,
+  useFormContext,
+} from 'react-hook-form';
+import classNames from 'classnames/bind';
+import styles from './ImageUploadConnect.module.scss';
+import Button from '@libs/shared/button/Button';
+import { useRef, useState } from 'react';
+import uploadImage from './uploadImage';
+import Icon from '@libs/shared/icon/Icon';
+import Image from 'next/image';
 
-const cx = classNames.bind(styles)
+const cx = classNames.bind(styles);
 
-type ImageUploadConnectProps<
-  F extends FieldValues,
-  N extends FieldPath<F>
-> = {
-  name: N
-  rules?: ControllerProps<F, N>['rules']
-}
+type ImageUploadConnectProps<F extends FieldValues, N extends FieldPath<F>> = {
+  name: N;
+  rules?: ControllerProps<F, N>['rules'];
+};
 
-const ImageUploadConnect = <
-  F extends FieldValues,
-  N extends FieldPath<F>
->({
+const ImageUploadConnect = <F extends FieldValues, N extends FieldPath<F>>({
   name,
   rules,
 }: ImageUploadConnectProps<F, N>) => {
-  const { setValue, control } = useFormContext()
+  const { setValue, control } = useFormContext();
 
   // TODO-3: 타입 문제 해결. 단언으로 임시 해결 중
-  const { fieldState: { error }, field: { value } } = useController({ control, name })
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [imageUrls, setImageUrls] = useState<string[]>(value as string[])
+  const {
+    fieldState: { error },
+    field: { value },
+  } = useController({ control, name });
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [imageUrls, setImageUrls] = useState<string[]>(value as string[]);
 
   const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target?.files) {
-      const files = Array.from(e.target.files)
+      const files = Array.from(e.target.files);
 
-      const uploadImageUrls = (await Promise.all(
-        files.map((file) => uploadImage(file)),
-      )).filter(Boolean) as string[]
+      // 1) 로컬 미리보기 URL 생성
+      const localPreviewUrls = files.map((file) => URL.createObjectURL(file));
+
+      // 화면에 즉시 표시
+      setImageUrls((prev) => [...prev, ...localPreviewUrls]);
+
+      // 2) 서버 업로드 진행
+      const uploadImageUrls = (
+        await Promise.all(files.map((file) => uploadImage(file)))
+      ).filter(Boolean) as string[];
+
+      // 서버 URL을 form에 저장
       if (uploadImageUrls.length > 0) {
-        setValue(name as string, [...imageUrls, ...uploadImageUrls], { shouldValidate: true })
-        setImageUrls([...imageUrls, ...uploadImageUrls])
+        setValue(name as string, [...(value || []), ...uploadImageUrls], {
+          shouldValidate: true,
+        });
       }
     }
-  }
+  };
 
   const handleRemoveImage = (url: string) => {
-    setValue(name as string, imageUrls.filter((imageUrl) => imageUrl !== url))
-    setImageUrls(imageUrls.filter((imageUrl) => imageUrl !== url))
-  }
+    setValue(
+      name as string,
+      imageUrls.filter((imageUrl) => imageUrl !== url)
+    );
+    setImageUrls(imageUrls.filter((imageUrl) => imageUrl !== url));
+  };
 
   return (
     <div className={cx('container')}>
@@ -63,14 +80,16 @@ const ImageUploadConnect = <
           render={() => (
             <label>
               <input
-                type='file'
+                type="file"
                 onChange={handleUploadImage}
                 multiple
                 accept="image/*"
                 hidden
                 ref={inputRef}
               />
-              <Button type='button' onClick={() => inputRef.current?.click()}>파일 찾기</Button>
+              <Button type="button" onClick={() => inputRef.current?.click()}>
+                파일 찾기
+              </Button>
             </label>
           )}
         />
@@ -80,16 +99,33 @@ const ImageUploadConnect = <
         {imageUrls.map((url, idx) => (
           <div key={idx} className={cx('imageContainer')}>
             <div className={cx('imageWrapper')}>
-              <Image src={url} alt='미리보기 이미지' width={200} height={300} className={cx('image')} />
+              <Image
+                src={url}
+                alt="미리보기 이미지"
+                width={200}
+                height={300}
+                className={cx('image')}
+              />
             </div>
-            <button type='button' onClick={() => { handleRemoveImage(url) }} className={cx('button')}>
-              <Icon name='cancel' alt='이미지 삭제 아이콘' width={40} height={40} />
+            <button
+              type="button"
+              onClick={() => {
+                handleRemoveImage(url);
+              }}
+              className={cx('button')}
+            >
+              <Icon
+                name="cancel"
+                alt="이미지 삭제 아이콘"
+                width={40}
+                height={40}
+              />
             </button>
           </div>
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ImageUploadConnect
+export default ImageUploadConnect;

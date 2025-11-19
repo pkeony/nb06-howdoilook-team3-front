@@ -42,7 +42,6 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'nb06-howdoilook-team3.onrender.com',
-        port: '',
         pathname: '/uploads/**',
       },
       {

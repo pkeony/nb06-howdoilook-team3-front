@@ -26,6 +26,10 @@ module.exports = {
         protocol: 'https',
         hostname: 'picsum.photos',
       },
+      {
+        protocol: 'https',
+        hostname: 'nb06-howdoilook-team3.onrender.com',
+      },
     ],
   },
 };

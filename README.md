@@ -120,3 +120,4 @@ export const getCuratings = async (
   return { currentPage, totalPages, totalItemCount: count, data: items }
 }
 ```
+# nb06-howdoilook-team3-front

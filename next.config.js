@@ -28,6 +28,19 @@ module.exports = {
       },
       {
         protocol: 'https',
+        hostname: 'cdn.pixabay.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.pixabay.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ibb.co',
+      },
+      {
+        protocol: 'https',
         hostname: 'nb06-howdoilook-team3.onrender.com',
       },
     ],

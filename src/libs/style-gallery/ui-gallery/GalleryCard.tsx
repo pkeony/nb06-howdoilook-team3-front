@@ -27,7 +27,7 @@ const GalleryCard = ({ card }: GalleryCardProps) => {
 
   return (
     <div className={cx('container')}>
-      {/* 이미지 영역 - 고정 비율 박스 */}
+      {/* 이미지 영역 */}
       <div className={cx('imageWrapper')}>
         <Link href={`/styles/${id}`} className={cx('imageLink')}>
           <div className={cx('imageBox')}>
@@ -43,9 +43,9 @@ const GalleryCard = ({ card }: GalleryCardProps) => {
         </Link>
       </div>
 
-      {/* 텍스트(메타) 영역 - 이미지와 완전히 분리 */}
+      {/* 텍스트 영역 */}
       <div className={cx('body')}>
-        {/* 카테고리(상/하의 등)를 텍스트 영역으로 이동 */}
+        {/* 카테고리 */}
         <div className={cx('categories')}>
           {Object.entries(categories)
             .slice(0, 4)
@@ -60,13 +60,18 @@ const GalleryCard = ({ card }: GalleryCardProps) => {
                   />
                   <h4>{STYLE_CATEGORY_TITLE_MAP[key]}</h4>
                 </div>
-                <p className={cx('categoryInfo')}>{`${category.name}, ${
-                  category.brand
-                }, ${category.price.toLocaleString()}원`}</p>
+
+                <p className={cx('categoryInfo')}>
+                  {`${category.name}, ${
+                    category.brand
+                  }, ${category.price.toLocaleString()}원`}
+                </p>
+                {/* 👍 JSX 닫는 태그 오류 여기 해결됨 */}
               </div>
             ))}
         </div>
 
+        {/* 제목/태그/Nickname */}
         <div className={cx('titleContainer')}>
           <div className={cx('tagsContainer')}>
             {tags.map((tag) => (
@@ -84,13 +89,15 @@ const GalleryCard = ({ card }: GalleryCardProps) => {
         <p className={cx('content')}>{content}</p>
       </div>
 
+      {/* Footer */}
       <div className={cx('footer')}>
         <div className={cx('count')}>
-          <Icon name="eye" height={16} width={16} alt="조회수 아이콘" />
+          <Icon name="eye" height={16} width={16} alt="조회수" />
           <span>{viewsCount}</span>
         </div>
+
         <div className={cx('count')}>
-          <Icon name="chat" height={16} width={16} alt="큐레이팅수 아이콘" />
+          <Icon name="chat" height={16} width={16} alt="큐레이팅수" />
           <span>{curationsCount}</span>
         </div>
       </div>

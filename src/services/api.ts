@@ -148,7 +148,14 @@ export const uploadImage = async (file: File) => {
   });
 
   const data = await handleResponse(response);
-  return { imageUrl: data.imageUrl };
+
+  // 백엔드에서 준 값이 절대경로면 그대로 반환
+  if (data.imageUrl.startsWith('http')) {
+    return { imageUrl: data.imageUrl };
+  }
+
+  // 혹시라도 상대경로면 BASE_URL 붙여서 절대주소로 변환
+  return { imageUrl: `${BASE_URL}${data.imageUrl}` };
 };
 
 // =========================

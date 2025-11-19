@@ -8,6 +8,7 @@ const nextConfig = {
     prependData: `@use "src/styles/utils.scss" as *;`,
   },
   images: {
+    domains: ['nb06-howdoilook-team3.onrender.com'],
     remotePatterns: [
       {
         protocol: 'http',

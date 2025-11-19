@@ -17,21 +17,25 @@
       position: relative;
       width: 220px;
       height: 320px;
+      overflow: hidden; // 🔥 중요: 이미지 넘칠 때 잘라냄
 
       .imageWrapper {
-        position: absolute;
-        bottom: 0;
-        left: 0;
+        width: 100%;
+        height: 100%;
+        position: relative; // 🔥 absolute 제거
 
         .image {
           object-fit: cover;
+          width: 100% !important; // 🔥 Next Image 크기 강제
+          height: 100% !important; // 🔥 Next Image 크기 강제
         }
       }
 
       .button {
         position: absolute;
-        top: 0;
-        right: 0;
+        top: 6px;
+        right: 6px;
+        z-index: 5; // 🔥 삭제 버튼 위로
       }
     }
   }

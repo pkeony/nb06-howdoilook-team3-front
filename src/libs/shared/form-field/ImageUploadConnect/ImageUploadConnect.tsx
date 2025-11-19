@@ -39,29 +39,34 @@ const ImageUploadConnect = <F extends FieldValues, N extends FieldPath<F>>({
   const [imageUrls, setImageUrls] = useState<string[]>(value as string[]);
 
   const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target?.files) {
-      const files = Array.from(e.target.files);
+    if (!e.target?.files) return;
 
-      // 1) 로컬 미리보기 URL 생성
-      const localPreviewUrls = files.map((file) => URL.createObjectURL(file));
+    const files = Array.from(e.target.files);
 
-      // 화면에 즉시 표시
-      setImageUrls((prev) => [...prev, ...localPreviewUrls]);
+    // 1) 로컬 미리보기 먼저 화면에 표시
+    const previewUrls = files.map((file) => URL.createObjectURL(file));
+    setImageUrls((prev) => [...prev, ...previewUrls]);
 
-      // 2) 서버 업로드 진행
-      const uploadImageUrls = (
-        await Promise.all(files.map((file) => uploadImage(file)))
-      ).filter(Boolean) as string[];
+    // 2) 서버 업로드
+    const uploadUrls = (
+      await Promise.all(files.map((file) => uploadImage(file)))
+    ).filter(Boolean) as string[];
 
-      // 서버 URL을 form에 저장
-      if (uploadImageUrls.length > 0) {
-        setValue(name as string, [...(value || []), ...uploadImageUrls], {
-          shouldValidate: true,
-        });
-      }
+    if (uploadUrls.length > 0) {
+      // 폼에도 넣고
+      setValue(name as string, [...(value || []), ...uploadUrls], {
+        shouldValidate: true,
+      });
+
+      // 🔥 state에도 서버 URL로 교체
+      setImageUrls((prev) => {
+        // prev: 로컬 미리보기 포함
+        // previewUrls.length 만큼 마지막에 붙은 로컬이미지를 서버 URL로 교체
+        const prevWithoutNew = prev.slice(0, prev.length - previewUrls.length);
+        return [...prevWithoutNew, ...uploadUrls];
+      });
     }
   };
-
   const handleRemoveImage = (url: string) => {
     setValue(
       name as string,
